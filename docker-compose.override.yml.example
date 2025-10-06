@@ -1,0 +1,32 @@
+# docker-compose.override.yml
+# This file is automatically loaded by docker-compose
+# Use it for development-specific overrides
+
+version: '3.8'
+
+services:
+  backend:
+    # Enable debug mode for development
+    environment:
+      - DJANGO_DEBUG=True
+    # Mount source code for hot reloading
+    volumes:
+      - ./backend:/app
+      - backend_static:/app/staticfiles
+    # Override command for development
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  frontend:
+    # Mount source code for hot reloading
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    # Enable hot reloading
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - FAST_REFRESH=true
+
+volumes:
+  backend_static:
